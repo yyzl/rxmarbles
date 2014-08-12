@@ -28,11 +28,12 @@
 
 + DONE Add reference to RxJS and its version in the footer
 + DONE README.md
-- TODO Styling for dragging a marble
-  - z-depth and side arrows
-- TODO Categories subheaders in the operators menu
-- TODO Fix bugs for first release
++ DONE Styling for dragging a marble
++ DONE Categories subheaders in the operators menu
+- TODO "Coming soon" examples, rendered in OperatorsMenu
+- TODO Polish for first release
   - cross browser issues, etc
+  - uglify JS for production
 >>> v1.0.0
 
 - TODO Render each stream with a different regular polygon?
