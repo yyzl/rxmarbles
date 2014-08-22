@@ -1,25 +1,31 @@
 Rx = require 'rx'
 
 module.exports = {
-  # "concatMap": {
-  #   "comingsoon": true
-  # }
-
   "delay": {
     "label": "delay"
     "inputs": [
-      [{t:0, d:1}, {t:10, d:2}]
+      [{t:0, d:1}, {t:10, d:2}, {t:20, d:1}]
     ]
     "apply": (inputs, scheduler) -> inputs[0].delay(20, scheduler)
   }
 
-  # "flatMap": {
-  #   "comingsoon": true
-  # }
+  "delayWithSelector": {
+    "label": "delayWithSelector(x => Rx.Observable.timer(20 * x))"
+    "inputs": [
+      [{t:0, d:1}, {t:10, d:2}, {t:20, d:1}]
+    ]
+    "apply": (inputs, scheduler) -> inputs[0].delayWithSelector((x) ->
+      return Rx.Observable.timer(Number(x.content) * 20, 1000, scheduler)
+    )
+  }
 
-  # "flatMapLatest": {
-  #   "comingsoon": true
-  # }
+  "findIndex": {
+    "label": "findIndex(x => x > 10)"
+    "inputs": [
+      [{t:5, d:2}, {t:15, d:30}, {t:25, d:22}, {t:35, d:5}, {t:45, d:60}, {t:55, d:1}]
+    ]
+    "apply": (inputs, scheduler) -> inputs[0].findIndex((x) -> x.content > 10)
+  }
 
   "map": {
     "label": "map(x => 10 * x)"
