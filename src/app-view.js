@@ -1,13 +1,11 @@
-import Cycle from 'cyclejs';
+import {h} from '@cycle/dom';
 import Colors from 'rxmarbles/styles/colors';
 import Dimens from 'rxmarbles/styles/dimens';
 import Fonts from 'rxmarbles/styles/fonts';
-import {mergeStyles} from 'rxmarbles/styles/utils';
-var Rx = Cycle.Rx;
-var h = Cycle.h;
+import {mergeStyles, renderSvgDropshadow} from 'rxmarbles/styles/utils';
 
-const rxmarblesGithubUrl = 'https://github.com/staltz/rxmarbles'
-const rxjsGithubUrl = 'https://github.com/Reactive-Extensions/RxJS'
+const rxmarblesGithubUrl = 'https://github.com/staltz/rxmarbles';
+const rxjsGithubUrl = 'https://github.com/Reactive-Extensions/RxJS';
 
 const pageRowWidth = '1060px';
 const sandboxWidth = '820px';
@@ -32,7 +30,7 @@ const pageRowLastChildStyle = mergeStyles(pageRowChildStyle, {
   width: sandboxWidth
 });
 
-function vrenderHeader() {
+function renderHeader() {
   return h('div', {style: pageRowStyle}, [
     h('h1',
       {style: mergeStyles({
@@ -48,34 +46,33 @@ function vrenderHeader() {
   ]);
 }
 
-function vrenderContent(route) {
-  return h('div', 
-    {style: mergeStyles(pageRowStyle, {marginTop: Dimens.spaceSmall})},
-    [
-      h('div', 
+function renderContent(route) {
+  const style = mergeStyles(pageRowStyle, {marginTop: Dimens.spaceSmall});
+  return (
+    h('div', {style}, [
+      h('div',
         {style: pageRowFirstChildStyle},
-        h('x-operators-menu')
+        h('x-operators-menu', {key: 'operatorsMenu'})
       ),
-      h('div', 
+      h('div',
         {style: mergeStyles({
           position: 'absolute',
           top: '0'},
           pageRowLastChildStyle)}
-        ,h('x-sandbox', {route: route, width: '820px'})
+        ,h('x-sandbox', {key: 'sandbox', route: route, width: '820px'})
       )
-    ]
+    ])
   );
 }
 
-function vrenderFooter(appVersion, rxVersion) {
-  return h('section', {
-    style: {
-      position: 'fixed',
-      bottom: '2px',
-      right: Dimens.spaceMedium,
-      color: Colors.greyDark
-    }
-  }, [
+function renderFooter(appVersion, rxVersion) {
+  const style = {
+    position: 'fixed',
+    bottom: '2px',
+    right: Dimens.spaceMedium,
+    color: Colors.greyDark
+  };
+  return h('section', {style}, [
     h('a', {href: `${rxmarblesGithubUrl}/releases/tag/v${appVersion}`}, `v${appVersion}`),
     ' built on ',
     h('a', {href: `${rxjsGithubUrl}/tree/v${rxVersion}`}, `RxJS v${rxVersion}`),
@@ -84,16 +81,13 @@ function vrenderFooter(appVersion, rxVersion) {
   ]);
 }
 
-module.exports = Cycle.createView(Model => ({
-  vtree$: Rx.Observable.combineLatest(
-    Model.get('route$'),
-    Model.get('appVersion$'),
-    Model.get('rxVersion$'),
-    (route, appVersion, rxVersion) =>
-      h('div', [
-        vrenderHeader(),
-        vrenderContent(route),
-        vrenderFooter(appVersion, rxVersion)
-      ])
-  )
-}));
+module.exports = function appView(state$) {
+  return state$.map(({route, appVersion, rxVersion}) =>
+    h('div', [
+      renderSvgDropshadow(),
+      renderHeader(),
+      renderContent(route),
+      renderFooter(appVersion, rxVersion)
+    ])
+  );
+};

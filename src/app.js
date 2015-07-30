@@ -1,20 +1,27 @@
-var Cycle = require('cyclejs');
-var AppModel = require('rxmarbles/app-model');
-var AppView = require('rxmarbles/app-view');
-var OperatorsMenuLinkComponent = require('rxmarbles/components/operators-menu-link');
-var OperatorsMenuComponent = require('rxmarbles/components/operators-menu');
-var SandboxComponent = require('rxmarbles/components/sandbox/sandbox');
-var DiagramComponent = require('rxmarbles/components/diagram/diagram');
-var MarbleComponent = require('rxmarbles/components/marble');
-var DiagramCompletionComponent = require('rxmarbles/components/diagram-completion');
+import Cycle from '@cycle/core';
+import {makeDOMDriver} from '@cycle/dom';
+import appModel from 'rxmarbles/app-model';
+import appView from 'rxmarbles/app-view';
+import operatorsMenuLinkComponent from 'rxmarbles/components/operators-menu-link';
+import operatorsMenuComponent from 'rxmarbles/components/operators-menu';
+import sandboxComponent from 'rxmarbles/components/sandbox/sandbox';
+import diagramComponent from 'rxmarbles/components/diagram/diagram';
+import marbleComponent from 'rxmarbles/components/marble';
+import diagramCompletionComponent from 'rxmarbles/components/diagram-completion';
 
-Cycle.registerCustomElement('x-operators-menu-link', OperatorsMenuLinkComponent);
-Cycle.registerCustomElement('x-operators-menu', OperatorsMenuComponent);
-Cycle.registerCustomElement('x-sandbox', SandboxComponent);
-Cycle.registerCustomElement('x-marble', MarbleComponent);
-Cycle.registerCustomElement('x-diagram-completion', DiagramCompletionComponent);
-Cycle.registerCustomElement('x-diagram', DiagramComponent);
+function main() {
+  return {
+    DOM: appView(appModel())
+  };
+}
 
-var User = Cycle.createDOMUser('.js-appContainer');
-
-User.inject(AppView).inject(AppModel);
+Cycle.run(main, {
+  DOM: makeDOMDriver('.js-appContainer', {
+    'x-operators-menu-link': operatorsMenuLinkComponent,
+    'x-operators-menu': operatorsMenuComponent,
+    'x-sandbox': sandboxComponent,
+    'x-marble': marbleComponent,
+    'x-diagram-completion': diagramCompletionComponent,
+    'x-diagram': diagramComponent
+  })
+});

@@ -1,14 +1,18 @@
-import Cycle from 'cyclejs';
-var Rx = Cycle.Rx;
-var packageJson = require('package');
-var RxPackageJson = require('cyclejs/node_modules/rx/package.json');
+import {Rx} from '@cycle/core';
+let packageJson = require('package');
+let RxPackageJson = require('@cycle/core/node_modules/rx/package.json');
 
 const DEFAULT_EXAMPLE = 'merge';
 
-module.exports = Cycle.createModel(() => ({
-  route$: Rx.Observable.fromEvent(window, 'hashchange')
+module.exports = function appModel() {
+  let route$ = Rx.Observable.fromEvent(window, 'hashchange')
     .map(hashEvent => hashEvent.target.location.hash.replace('#', ''))
-    .startWith(window.location.hash.replace("#", "") || DEFAULT_EXAMPLE),
-  appVersion$: Rx.Observable.just(packageJson.version),
-  rxVersion$: Rx.Observable.just(RxPackageJson.version)
-}));
+    .startWith(window.location.hash.replace('#', '') || DEFAULT_EXAMPLE);
+  let appVersion$ = Rx.Observable.just(packageJson.version);
+  let rxVersion$ = Rx.Observable.just(RxPackageJson.version);
+  return Rx.Observable.combineLatest(
+    route$, appVersion$, rxVersion$,
+    (route, appVersion, rxVersion) =>
+    ({route, appVersion, rxVersion})
+  );
+};
